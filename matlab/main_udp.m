@@ -40,7 +40,8 @@ end
 %% ROS for the simulator
 % Static IP address of the simulator
 %rosinit('172.31.1.210');
-[posPub,posMsg] = rospublisher('/position');
+[posPub,posMsg] = rospublisher('/realQ');
+[torPub,torMsg] = rospublisher('/realT');
 
 
 %% main loop
@@ -56,6 +57,7 @@ for k=0:50000
     torJoints = dataDouble(8:13,1)';
     
     posJointsChar = char(A');
+    [posPub,posMsg] = rospublisher('/position');
     posJointsRad = (str2num(posJointsChar))';   
     posJoints = posJointsRad*57.2958; %transform to degrees
     % Plotting
@@ -77,7 +79,7 @@ for k=0:50000
     %xlim([0, tSim+tSimStep])
 
     % send joints position to simulator
-    posMsg.Data = posJointsChar;
+    posMsg.Data = char(posJointsRad);
     send(posPub,posMsg); 
             
     %update simulation values 
