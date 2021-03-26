@@ -1,0 +1,58 @@
+
+  double sensor_value, joint_value;   
+  setArray(JointPath[0]); //Initialize
+
+// Main loop      
+  while (wb_robot_step(TIME_STEP) != -1) {
+  
+  // Sensor errors 
+  flag = false;
+  for (i = 0; i < 6; ++i){
+  switch (i)
+  {
+      case 0: sensor_value = wb_position_sensor_get_value(Joint1);
+          break;
+      case 1: sensor_value = wb_position_sensor_get_value(Joint2);
+          break;
+      case 2: sensor_value = wb_position_sensor_get_value(Joint3);
+          break;
+      case 3: sensor_value = wb_position_sensor_get_value(Joint4);
+          break;
+      case 4: sensor_value = wb_position_sensor_get_value(Joint5);
+          break;
+      case 5: sensor_value = wb_position_sensor_get_value(Joint6);
+          break;
+  }
+  joint_value = target_positions[i];
+  error[i] = joint_value-sensor_value;
+  if (error[i]<0){
+  error[i] = -error[i];
+  }
+  if (error[i]>error_margin){
+  flag = true;
+  }
+  
+  }
+
+// Move or Set up next position   
+  if (flag){
+    for (i = 0; i < 6; ++i){
+    wb_motor_set_position(ur_motors[i], target_positions[i]);
+   }
+  }
+  if (!flag){
+    if (pointer <= pointer_l){
+    setArray(JointPath[pointer]); 
+    printf("Next: %d. ", pointer);
+    }
+    for (i = 0; i < 6; ++i){
+    joint_value = target_positions[i];
+    printf("%f, ", joint_value);
+    }        
+    pointer++;
+    }
+  };
+
+  wb_robot_cleanup();
+  return 0;
+}
