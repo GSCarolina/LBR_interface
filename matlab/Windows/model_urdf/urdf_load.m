@@ -56,3 +56,4 @@ PlotFollow(lbr_med, Waypoints, Path, JointPath, 0);
 % eeBack=[0 -1 0 pi/2];   % gripper pointing inward (world -X)
 % eeUp=[0 0 1 pi/2];      % gripper pointing up
 %save('eeConfig.mat','eeDown','eeLeft','eeRight','eeFront','eeBack','eeUp');
+
