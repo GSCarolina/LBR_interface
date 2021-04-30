@@ -1,35 +1,44 @@
-function [energy,pOut] = rebouncePoints(pCenter,pWall,pX,th)
-% Checks if a point is close to a wall and puts it back
+function [energy,xOut] = rebouncePoints(xCenter,xWall,x,Loff)
+% Function that calculates the potential energy of a point towards a wall
+% and in case it overpasses the wall, it pushes it back
+% [energy,xOut] = rebouncePoints(xCenter,xWall,x,Loff)
+% - xCenter = centroid location vector [x y z]
+% - xWall = virtual wall closest point vector [x y z] 
+% - x = point [x y z]
+% - Loff = distance offset in m
+% - energy = vector with the potential energy in each axis [x y z]
+% - xOut = either original x or a modified x that is inside the safe
+% workspace
 
-pOut = zeros(1,3);
+xOut = zeros(1,3);
 energy = zeros(1,3);
 for i=1:3 %3D dimensional points
-    m = 1/(pWall(i) -th -pCenter(i));
-    if pCenter(i)>pWall(i)
-        m = 1/(pWall(i) +th -pCenter(i));
+    m = 1/(xWall(i) -Loff -xCenter(i));
+    if xCenter(i)>xWall(i)
+        m = 1/(xWall(i) +Loff -xCenter(i));
     end
-    n = -m*pCenter(i);
+    n = -m*xCenter(i);
     
-    E = m*pX(i)+n;
+    U = m*x(i)+n;
     
     % check boundaries
     if E<=1
-        pOut(i) = pX(i);
+        xOut(i) = x(i);
     else
-        %E = 1;
-        % rebounce pX inside the wall
-        if pWall(i) >= pCenter(i)
-            pOut(i) = pWall(i) - th;
+        %U = 1;
+        % rebounce x inside Loffe wall
+        if xWall(i) >= xCenter(i)
+            xOut(i) = xWall(i) - Loff;
         else
-            pOut(i) = pWall(i) + th;
+            xOut(i) = xWall(i) + Loff;
         end
     end
     
 %     if E<0
-%         E = 0;
+%         U = 0;
 %     end
     
-    energy(i) = E;
+    energy(i) = U;
 end
 end
 

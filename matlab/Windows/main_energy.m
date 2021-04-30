@@ -1,4 +1,6 @@
 %------------ MAIN CODE FOR ENERGY -------------
+
+%% ------------ POTENTIAL ENERGY
 %% Adding dependencies
 %clear
 %clc
@@ -217,3 +219,118 @@ xlabel('Path point [nr]')
 ylabel('Energy [nominal]')
 legend('Given path', 'Corrected path')
 xlim([dataX(1) dataX(end)])
+
+%% ------------ KINETIC ENERGY
+Waypoints = [ 0.05  0.05  0.05; 
+              0.40  0.15  0.10; 
+              0.35  0.30  0.10 ; 
+              0.30  0.40  0.10 ; 
+              0.20  0.45  0.10; 
+              0.20  0.45  0.10];  
+xWall = [0.5, 0.5 ,y 0.5];
+xCenter = Waypoints(1,:);
+x_old = xCenter;
+x=xCenter;
+
+deltaX = 0.01;
+dX = [xCenter(1):deltaX:xWall(1); xCenter(2):deltaX:xWall(2); xCenter(3):deltaX:xWall(3)];
+dX = dX';
+
+Ek= [];
+for(j=1:length(dX))
+    energy = getKineticEnergy(xCenter,xWall,x,dX(j,:));
+    Ek = [Ek; energy];
+end
+Ek = Ek';
+
+dX_unit = [];
+for (j=1:length(dX))
+    velocity = dX(j,1)^2 + dX(j,2)^2 + dX(j,3)^2;
+    dX_unit = [dX_unit; (sqrt(velocity))];
+end
+dX_unit = dX_unit';
+
+% absolute values
+plot(dX_unit, Ek);
+
+
+% relative values
+max_velocity = (xCenter(1)-xWall(1))^2 + (xCenter(2)-xWall(2))^2 + (xCenter(3)-xWall(3))^2;
+max_velocity = sqrt(max_velocity);
+
+plot((1/max_velocity)*dX_unit, Ek);
+%% ------------ ENERGY APPLICATIONS
+
+%% Using the energy to get the spring stiffness and damping parameters 
+deltaE = 0.001;
+Ek = [0:deltaE:1];
+U = [0:deltaE:1];
+
+% Mapping the Stiffness for C-axis
+Kaxis = zeros(1,length(U));
+Kaxis_min = 200; Kaxis_max = 5000;
+
+for i=1:length(Kaxis)
+    Kaxis(i) = setParameter(U(i),Kaxis_max,Kaxis_min);
+end
+
+% Mapping the Stiffness for C-angles
+Kangles = zeros(1,length(U));
+Kangles_min = 10; Kangles_max = 300;
+
+for i=1:length(Kangles)
+    Kangles(i) = setParameter(U(i),Kangles_max,Kangles_min);
+end
+
+% Mapping the Damping
+D = zeros(1,length(Ek));
+Dmin = 0.1; Dmax = 1;
+for i=1:length(D)
+    D(i) = setParameter(Ek(i),Dmax,Dmin);
+end
+
+%% Comparing java to matlab
+% load Java data
+data = load("outJava.txt");
+Kaxis_java = data(:,1)';
+Kangles_java = data(:,2)';
+D_java = data(:,3)';
+
+% plot and compare
+for k=1:3
+   switch k
+       case 1
+           figure('Name','Stiffness axis')
+           dataX = U;
+           dataY1 = Kaxis;
+           dataY2 = Kaxis_java;
+       case 2
+           figure('Name','Stiffness angles')
+           dataX = U;
+           dataY1 = Kangles;
+           dataY2 = Kangles_java;
+       case 3
+           figure('Name','Damping axis')
+           dataX = Ek;
+           dataY1 = D;
+           dataY2 = D_java;
+   end
+           
+   subplot(1,2,1)
+   title('Parameters value')
+   grid on
+   hold on
+   plot(dataX, dataY1, dataX, dataY2);
+   hold off
+   
+   diffY = dataY1 - dataY2;
+   subplot(1,2,2)
+   title('Absolute difference bettween values')
+   grid on
+   hold on
+   plot(dataX, diffY);
+   hold off
+end
+% conlcusion: the java double values are OK and close enough to the Matlab
+% values
+
