@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="lbrMed_withBaseLink_FramesBase.sldasm">
+  <link
+    name="ROBERT_platform">
+    <inertial>
+      <origin
+        xyz="0.27949 -6.431E-05 -0.38981"
+        rpy="0 0 0" />
+      <mass
+        value="19.445" />
+      <inertia
+        ixx="0.6661"
+        ixy="-0.00060605"
+        ixz="0.023686"
+        iyy="0.4732"
+        iyz="0.00010259"
+        izz="0.67677" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_platform.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.7 0.7 0.7 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_platform.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="ROBERT_base">
+    <inertial>
+      <origin
+        xyz="0.041359 4.9507E-08 0.99543"
+        rpy="0 0 0" />
+      <mass
+        value="6.0056" />
+      <inertia
+        ixx="0.036487"
+        ixy="2.0024E-08"
+        ixz="0.0057256"
+        iyy="0.033522"
+        iyz="-2.2832E-08"
+        izz="0.041893" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_base.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.95 0.95 0.95 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_base.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ROBERT_base_fixed"
+    type="fixed">
+    <origin
+      xyz="0.53522 0 -0.76138"
+      rpy="0 -0.61087 0" />
+    <parent
+      link="ROBERT_platform" />
+    <child
+      link="ROBERT_base" />
+    <axis
+      xyz="0 0 0" />
+    <limit
+      lower="-2.967"
+      upper="2.967"
+      effort="350"
+      velocity="3" />
+  </joint>
+  <link
+    name="ROBERT_shoulder">
+    <inertial>
+      <origin
+        xyz="-1.0921E-06 -0.033794 0.1277"
+        rpy="0 0 0" />
+      <mass
+        value="4.1086" />
+      <inertia
+        ixx="0.032982"
+        ixy="4.1814E-08"
+        ixz="3.7416E-07"
+        iyy="0.033274"
+        iyz="0.0049257"
+        izz="0.012326" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_shoulder.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.95 0.95 0.95 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_shoulder.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ROBERT_joint1"
+    type="revolute">
+    <origin
+      xyz="0.085578 0 1.0553"
+      rpy="0 0.61087 0" />
+    <parent
+      link="ROBERT_base" />
+    <child
+      link="ROBERT_shoulder" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-2.967"
+      upper="2.967"
+      effort="350"
+      velocity="3" />
+  </joint>
+  <link
+    name="ROBERT_lowerArm">
+    <inertial>
+      <origin
+        xyz="0.00013064 -0.07633 0.037544"
+        rpy="0 0 0" />
+      <mass
+        value="4.4185" />
+      <inertia
+        ixx="0.04286"
+        ixy="-4.2906E-05"
+        ixz="-2.4964E-05"
+        iyy="0.012833"
+        iyz="-0.0077921"
+        izz="0.041927" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_lowerArm.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.95 0.95 0.95 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_lowerArm.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ROBERT_joint2"
+    type="revolute">
+    <origin
+      xyz="0 0 0.2078"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="ROBERT_shoulder" />
+    <child
+      link="ROBERT_lowerArm" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-2.0943"
+      upper="2.0943"
+      effort="350"
+      velocity="3" />
+  </joint>
+  <link
+    name="ROBERT_elbow">
+    <inertial>
+      <origin
+        xyz="1.8351E-06 0.034909 0.11381"
+        rpy="0 0 0" />
+      <mass
+        value="2.6884" />
+      <inertia
+        ixx="0.016871"
+        ixy="9.3037E-08"
+        ixz="-1.4954E-07"
+        iyy="0.016102"
+        iyz="-0.0029863"
+        izz="0.005981" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_elbow.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.95 0.95 0.95 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_elbow.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ROBERT_joint3"
+    type="revolute">
+    <origin
+      xyz="0 -0.2373 0"
+      rpy="1.5708 0 0" />
+    <parent
+      link="ROBERT_lowerArm" />
+    <child
+      link="ROBERT_elbow" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-2.967"
+      upper="2.967"
+      effort="350"
+      velocity="10" />
+  </joint>
+  <link
+    name="ROBERT_upperArm">
+    <inertial>
+      <origin
+        xyz="-7.4067E-08 0.086942 0.02979"
+        rpy="0 0 0" />
+      <mass
+        value="3.2026" />
+      <inertia
+        ixx="0.025176"
+        ixy="-7.0603E-09"
+        ixz="2.0819E-07"
+        iyy="0.0076769"
+        iyz="0.004677"
+        izz="0.023892" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_upperArm.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.95 0.95 0.95 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_upperArm.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ROBERT_joint4"
+    type="revolute">
+    <origin
+      xyz="0 0.0005 0.1827"
+      rpy="1.5708 0 0" />
+    <parent
+      link="ROBERT_elbow" />
+    <child
+      link="ROBERT_upperArm" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-2.0943"
+      upper="2.0943"
+      effort="350"
+      velocity="10" />
+  </joint>
+  <link
+    name="ROBERT_wrist1">
+    <inertial>
+      <origin
+        xyz="9.5301E-07 -0.029822 0.066966"
+        rpy="0 0 0" />
+      <mass
+        value="1.2146" />
+      <inertia
+        ixx="0.0067395"
+        ixy="2.5624E-08"
+        ixz="8.1717E-09"
+        iyy="0.0056681"
+        iyz="0.0022283"
+        izz="0.0030564" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_wrist1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.95 0.95 0.95 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_wrist1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ROBERT_joint5"
+    type="revolute">
+    <origin
+      xyz="0 0.2168 0.0005"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="ROBERT_upperArm" />
+    <child
+      link="ROBERT_wrist1" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-2.967"
+      upper="2.967"
+      effort="350"
+      velocity="10" />
+  </joint>
+  <link
+    name="ROBERT_wrist2">
+    <inertial>
+      <origin
+        xyz="1.7505E-06 -0.0049557 0.061029"
+        rpy="0 0 0" />
+      <mass
+        value="1.9087" />
+      <inertia
+        ixx="0.0056122"
+        ixy="-3.928E-08"
+        ixz="4.0496E-07"
+        iyy="0.0036753"
+        iyz="-0.00024707"
+        izz="0.0054041" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_wrist2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.95 0.95 0.95 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_wrist2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ROBERT_joint6"
+    type="revolute">
+    <origin
+      xyz="0 -0.0607 0.1832"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="ROBERT_wrist1" />
+    <child
+      link="ROBERT_wrist2" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-2.0943"
+      upper="2.0943"
+      effort="350"
+      velocity="10" />
+  </joint>
+  <link
+    name="ROBERT_wrist3">
+    <inertial>
+      <origin
+        xyz="-3.0531E-05 -2.9893E-05 0.013782"
+        rpy="0 0 0" />
+      <mass
+        value="0.20609" />
+      <inertia
+        ixx="0.00013586"
+        ixy="1.4059E-08"
+        ixz="-6.6731E-09"
+        iyy="0.00013585"
+        iyz="2.2202E-09"
+        izz="0.00023745" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_wrist3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.95 0.95 0.95 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_wrist3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ROBERT_joint7"
+    type="revolute">
+    <origin
+      xyz="3.3739E-05 -0.091 0.060728"
+      rpy="1.5708 0 0" />
+    <parent
+      link="ROBERT_wrist2" />
+    <child
+      link="ROBERT_wrist3" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-3.05"
+      upper="3.05"
+      effort="350"
+      velocity="10" />
+  </joint>
+  <link
+    name="ROBERT_ee">
+    <inertial>
+      <origin
+        xyz="0.0080303 0.072563 -0.0036053"
+        rpy="0 0 0" />
+      <mass
+        value="0.8735" />
+      <inertia
+        ixx="0.0033013"
+        ixy="5.2014E-06"
+        ixz="3.714E-05"
+        iyy="0.0021933"
+        iyz="-9.0259E-05"
+        izz="0.0025101" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_ee.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.76 0.765 0.78 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://lbrMed_withBaseLink_FramesBase.sldasm/meshes/ROBERT_ee.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ROBERT_tcp"
+    type="fixed">
+    <origin
+      xyz="-3.3739E-05 -2.831E-05 0.12113"
+      rpy="0 0 3.1416" />
+    <parent
+      link="ROBERT_wrist3" />
+    <child
+      link="ROBERT_ee" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>
