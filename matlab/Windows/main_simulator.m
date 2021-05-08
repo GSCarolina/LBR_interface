@@ -10,7 +10,7 @@ Fee_acc = [];
 Mee_acc = [];
 
 %% main loop
-for k=0:1000
+for k=0:1
     % exchange data with simulator
     message = ['Matlab socket'];
     fwrite(u,message)

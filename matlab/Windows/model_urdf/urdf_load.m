@@ -10,6 +10,7 @@ addpath(folder_functions);
 
 %If the .urdf file was changed, uncomment the following lines:
 %[lbr_med, solver] = initialization_UR3e('lbrMed.urdf')
+%[lbr_med, solver] = initialization_robot('lbrMed.urdf')
 %save([folder_lbr '\' 'lbrMed_param.mat'], 'lbr_med', 'solver');
 %Otherwise
 disp('Loading robot model...');

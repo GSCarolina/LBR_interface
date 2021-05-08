@@ -1,10 +1,11 @@
-function PlotFollow(robot, Waypoints, Path, JointPath,limit)
+function PlotFollow(robot, Waypoints, Path, JointPath,limit,robName)
 %Small animation to show how the robot follows a trajectory.
 %[result] = PlotFollow(robot, Waypoints, Path, JointPath, limit)
 %- robot: input rigidBodyTree.
 %- Waypoints, Path: trajectory and middle points in cartesian space.
 %- JointPath: trajectory in joint space.
 %- limit: finishes the animation n interactions earlier.
+%- robName: robot name, either 'robert' or 'lbrMed'
 
 figure
 show(robot, JointPath(1,:)','Frames','off','PreservePlot',false);
@@ -16,7 +17,13 @@ title('Trajectory execution')
 xlabel('x [m]')
 ylabel('y [m]')
 zlabel('z [m]')
-axis([-0.6 0.6 -0.6 0.6 -0.1 0.8])
+
+if(robName == 'lbrMed')
+    axis([-0.6 0.6 -0.6 0.6 -0.1 0.8])
+end
+if(robName == 'robert')
+    axis([-1.3 1.3 -1.3 1.3 -1.0 1.0])
+end
 
 size_JP = size(JointPath);
 limit_t = size_JP(1);

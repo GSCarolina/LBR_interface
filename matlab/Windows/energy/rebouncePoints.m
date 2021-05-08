@@ -22,10 +22,10 @@ for i=1:3 %3D dimensional points
     U = m*x(i)+n;
     
     % check boundaries
-    if E<=1
+    if U<=1
         xOut(i) = x(i);
     else
-        %U = 1;
+        U = 1;
         % rebounce x inside Loffe wall
         if xWall(i) >= xCenter(i)
             xOut(i) = xWall(i) - Loff;

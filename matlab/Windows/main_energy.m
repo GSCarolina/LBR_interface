@@ -259,6 +259,93 @@ max_velocity = (xCenter(1)-xWall(1))^2 + (xCenter(2)-xWall(2))^2 + (xCenter(3)-x
 max_velocity = sqrt(max_velocity);
 
 plot((1/max_velocity)*dX_unit, Ek);
+
+%% Defining a non-dimensional energy field
+xWall_1 = 0.05*ones(1,3); 
+xWall_2 = 0.2*ones(1,3); 
+xWall_3 = 0.8*ones(1,3); 
+
+xCenter = [0.0 0.0 0.0];
+xEE = xCenter;
+th = 0.001;
+
+deltaX = 0.001;
+
+% Potential energy for different scenarios
+U1 = [];
+dX1 = [xCenter(1):deltaX:xWall_1(1); xCenter(2):deltaX:xWall_1(2); xCenter(3):deltaX:xWall_1(3)];
+dX1 = dX1';
+[amount dummy] = size(dX1);
+for j=1:length(dX1)
+    [energy,correctedWay] = rebouncePoints(xCenter,xWall_1,dX1(j,:),th);
+    U1 = [U1; energy];
+end
+
+U2 = [];
+dX2 = [xCenter(1):deltaX:xWall_2(1); xCenter(2):deltaX:xWall_2(2); xCenter(3):deltaX:xWall_2(3)];
+dX2 = dX2';
+for j=1:length(dX2)
+    [energy,correctedWay] = rebouncePoints(xCenter,xWall_2,dX2(j,:),th);
+    U2 = [U2; energy];
+end
+
+U3 = [];
+dX3 = [xCenter(1):deltaX:xWall_3(1); xCenter(2):deltaX:xWall_3(2); xCenter(3):deltaX:xWall_3(3)];
+dX3 = dX3';
+for j=1:length(dX3)
+    [energy,correctedWay] = rebouncePoints(xCenter,xWall_3,dX3(j,:),th);
+    U3 = [U3; energy];
+end
+
+% calculating gains
+Kaxis_min = 200; Kaxis_max = 5000;
+
+K1 = [];
+for j=1:length(U1(:,3))
+    k = setParameter(U1(j,3),Kaxis_max,Kaxis_min);
+    K1 = [K1; k];
+end
+K2 = [];
+for j=1:length(U2(:,3))
+    k = setParameter(U2(j,3),Kaxis_max,Kaxis_min);
+    K2 = [K2; k];
+end
+K3 = [];
+for j=1:length(U3(:,3))
+    k = setParameter(U3(j,3),Kaxis_max,Kaxis_min);
+    K3 = [K3; k];
+end
+
+% plotting energy and gains
+figure
+subplot(2,1,1)
+grid on
+hold on
+title('Potential energy with three different obstacles')
+plot([dX1(:,3)' 1.1*dX3(end)] ,[U1(:,3)' U1(end)],'-b',dX1(end),U1(end),'ob');
+plot([dX2(:,3)' 1.1*dX3(end)] ,[U2(:,3)' U2(end)],'-r',dX2(end),U2(end),'or');
+plot([dX3(:,3)' 1.1*dX3(end)] ,[U3(:,3)' U3(end)],'-g',dX3(end),U3(end),'og');
+xlim([dX1(1) dX3(end)]);
+xlabel('Xee position [m]')
+ylim([0 1.1]);
+ylabel('Potential energy [unit]')
+legend('U1','xWall 1', 'U2','xWall 2', 'U3','xWall 3')
+hold off
+
+subplot(2,1,2)
+grid on
+hold on
+title('Stiffness gain with three different obstacles')
+plot([dX1(:,3)' 1.1*dX3(end)] ,[K1' K1(end)],'-b',dX1(end),K1(end),'ob');
+plot([dX2(:,3)' 1.1*dX3(end)] ,[K2' K2(end)],'-r',dX2(end),K2(end),'or');
+plot([dX3(:,3)' 1.1*dX3(end)] ,[K3' K3(end)],'-g',dX3(end),K3(end),'og')
+xlim([dX1(1) dX3(end)]);
+xlabel('Xee position [m]')
+ylim([0 1.1*5000]);
+ylabel('C-axis gain [k]')
+legend('K1','xWall 1', 'K2','xWall 2', 'K3','xWall 3')
+hold off
+
 %% ------------ ENERGY APPLICATIONS
 
 %% Using the energy to get the spring stiffness and damping parameters 
