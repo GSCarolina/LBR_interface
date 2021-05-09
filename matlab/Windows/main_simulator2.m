@@ -1,6 +1,6 @@
 %------------ MAIN CODE FOR SIMULATOR -------------
 %% Start connection with simulator
-u = udp('127.0.0.1',30002); % only can be a client
+u = udp('127.0.0.1',30009); % only can be a client
 fopen(u)
 
 %% Start up variables
@@ -11,7 +11,7 @@ xOut_acc = [];
 
 % main loop
 tStep = 0.001;
-for k=0:10000
+for k=0:1
     % exchange data with simulator
     message = ['Matlab socket'];
     fwrite(u,message)
