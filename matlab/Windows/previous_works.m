@@ -48,7 +48,7 @@ hold off
 % Uo = 1/2*eta*((1/rho)-(1/rho0))^2;  
 % constants
 eta = 40;
-rho0 = 5;
+rho0 = 25;
 
 delta = 0.1;
 rho = [1:delta:30];
@@ -56,7 +56,7 @@ rho = [1:delta:30];
 Uo = zeros(1, length(rho));
 
 for i=1:length(Uo)
-    if (rho(i)<rho0)
+    if (rho(i)>rho0)
         Uo(i) = 0;
     else
         Uo(i) = 0.5*eta*((1/rho(i))-(1/rho0))^2;
@@ -68,7 +68,7 @@ grid on
 hold on
 plot(rho,Uo)
 xlim([rho(1) rho(end)])
-ylim([0.9*min(Uo) 1.1*max(Uo(1,50:end))])
+ylim([0.9*min(Uo) max(Uo(1,20:end))])
 xlabel('Distance to the obstacle')
 ylabel('Potential energy')
 title('Repulsive APF approach')

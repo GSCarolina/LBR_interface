@@ -22,6 +22,7 @@ rmax = 0;
 rmin = 0;
 w1 = strcmp(config,'with');
 w0 = strcmp(config,'without');
+w2 = strcmp(config,'path');
 if w1 
 rmax = 0.4225; 
 rmin = 0.0289;
@@ -29,6 +30,10 @@ end
 if w0
 rmax = 0.2025; 
 rmin = 0.004;
+end
+if w2
+    rmax = 10; 
+    rmin = 0;
 end
 %Checking input parameters
 if (rmax==0)
