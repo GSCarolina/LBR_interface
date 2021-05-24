@@ -117,7 +117,7 @@ end
 plot(x(:,1)',go1,x(:,1)',go2,x(:,1)',go3)
 
 %% Testing different margins (3D lines)
-Kmax = 500; Kmin = 200;
+Kmax = 5000; Kmin = 200;
 xCenter =[0; 0];
 xWall = [10; 10];
 x1 = [0:0.001:10]; x2 = [0:0.001:10]; x = [x1' x2'];
@@ -135,13 +135,20 @@ end
 
 plot3(x(:,1)',x(:,2)',go1,x(:,1)',x(:,2)',go2,x(:,1)',x(:,2)',go3)
 
+%% COMPARTING TO THE JAVA CLASS (method/function getGainsLine)
+go1_java = load('C:\Users\Carolina\Desktop\net_shared\LBR_interface\matlab\Windows\energy\Java2DStiffness1.txt')';
+go2_java = load('C:\Users\Carolina\Desktop\net_shared\LBR_interface\matlab\Windows\energy\Java2DStiffness2.txt')';
+go3_java = load('C:\Users\Carolina\Desktop\net_shared\LBR_interface\matlab\Windows\energy\Java2DStiffness3.txt')';
+
+plot3(x(:,1)',x(:,2)',go1_java,x(:,1)',x(:,2)',go2_java,x(:,1)',x(:,2)',go3_java)
+% This went fine
 %% Testing different margins (3D plane)
 Kmax = 500; Kmin = 200;
 xCenter =[10; 10];
 xWall = [5; 5];
 xOff1 = 0.125; xOff2 = 0.5; xOff3 = 0.75;
 
-[X,Y] = meshgrid(0:0.1:20,0:0.01:20);
+[X,Y] = meshgrid(0:0.1:20,0:0.1:20);
 [sizeM sizeN] = size(X);
 Z1 = zeros(sizeM,sizeN);
 Z2 = zeros(sizeM,sizeN);
@@ -223,6 +230,56 @@ subplot(3,1,3)
 grid on
 hold on
 turnPlane = surf(X,Y,Z3,'FaceAlpha',0.7, 'EdgeColor','none')
+plot3([xCenter(1) xCenter(1)], [xCenter(2) xCenter(2)], [Kmin Kmax],'-g','LineWidth', 2)
+plot3([xWall(1) xWall(1)], [xWall(2) xWall(2)], [Kmin Kmax],'-r','LineWidth', 2)
+%'FaceColor' = select color in a hexadecimal value
+xlabel('x [m]')
+ylabel('y [m]')
+zlabel('Gain')
+title(['Stiffness Gain with x offset = ' num2str(xOff3)])
+
+
+%% COMPARING GAINS WITH THE JAVA CLASS IN SUNRISE
+% I messed something with the x and y coordinates. But the same method with
+% 3D lines works, so dont take this into accound
+data1 = load('C:\Users\Carolina\Desktop\net_shared\LBR_interface\matlab\Windows\energy\JavaStiffness1.txt');
+[sizeM sizeN] = size(X);
+Z1_java = data1(1:sizeM,:);
+x1_java = data1(sizeM+1:sizeM*2,:);
+y1_java = data1(sizeM*2+1:end,:);
+
+Z2_java = load('C:\Users\Carolina\Desktop\net_shared\LBR_interface\matlab\Windows\energy\JavaStiffness2.txt');
+Z3_java = load('C:\Users\Carolina\Desktop\net_shared\LBR_interface\matlab\Windows\energy\JavaStiffness3.txt');
+
+figure
+subplot(1,3,1)
+grid on
+hold on
+turnPlane = surf(X,Y,Z1_java,'FaceAlpha',0.7, 'EdgeColor','none')
+plot3([xCenter(1) xCenter(1)], [xCenter(2) xCenter(2)], [Kmin Kmax],'-g','LineWidth', 2)
+plot3([xWall(1) xWall(1)], [xWall(2) xWall(2)], [Kmin Kmax],'-r','LineWidth', 2)
+%'FaceColor' = select color in a hexadecimal value
+xlabel('x [m]')
+ylabel('y [m]')
+zlabel('Gain')
+title(['Stiffness Gain with x offset = ' num2str(xOff1)])
+
+subplot(1,3,2)
+grid on
+hold on
+turnPlane = surf(x2_java,y2_java,Z2_java,'FaceAlpha',0.7, 'EdgeColor','none')
+plot3([xCenter(1) xCenter(1)], [xCenter(2) xCenter(2)], [Kmin Kmax],'-g','LineWidth', 2)
+plot3([xWall(1) xWall(1)], [xWall(2) xWall(2)], [Kmin Kmax],'-r','LineWidth', 2)
+%'FaceColor' = select color in a hexadecimal value
+xlabel('x [m]')
+ylabel('y [m]')
+zlabel('Gain')
+title(['Stiffness Gain with x offset = ' num2str(xOff2)])
+
+subplot(1,3,3)
+grid on
+hold on
+turnPlane = surf(X,Y,Z3_java,'FaceAlpha',0.7, 'EdgeColor','none')
 plot3([xCenter(1) xCenter(1)], [xCenter(2) xCenter(2)], [Kmin Kmax],'-g','LineWidth', 2)
 plot3([xWall(1) xWall(1)], [xWall(2) xWall(2)], [Kmin Kmax],'-r','LineWidth', 2)
 %'FaceColor' = select color in a hexadecimal value
@@ -384,7 +441,8 @@ lambda = 0.5*eta*((1/rho)-(1/rho0))^2;
 
     if(length(x)==1)
         xout = xCenter(1) + delta*rho0;
-    else if(length(x)>=2)
+    end
+    if(length(x)>=2)
     % Calculate angle between center and x
     cosC = (x(1)-xCenter(1))/sqrt((x(1)-xCenter(1))^2 + (x(2)-xCenter(2))^2);
     senC = (x(2)-xCenter(2))/sqrt((x(1)-xCenter(1))^2 + (x(2)-xCenter(2))^2);
@@ -399,3 +457,57 @@ lambda = 0.5*eta*((1/rho)-(1/rho0))^2;
         %A = acos(cosA);
         xout(3) = xCenter(3) + delta*rho0*cosA;
     end
+    
+    
+%% COMPARING CORRECTION POINTS TO JAVA 
+% matlab
+Waypoints = [ 0.50  0.05  0.07; 
+              0.40  0.15  0.50; 
+              0.35  0.30  0.50 ; 
+              0.30  0.40  0.0 ; 
+              0.20  0.45  0.20; 
+              0.20  0.45  0.50];          
+xWallZ = 0.3; 
+xWall_plane = [Waypoints(:,1) Waypoints(:,2) xWallZ*ones(length(Waypoints(:,1)),1) ];
+% Center (inside)
+xCenterZ_in = 0.0;
+xCenter_in = [Waypoints(:,1) Waypoints(:,2) xCenterZ_in*ones(length(Waypoints(:,1)),1) ];
+% Center (outside)
+xCenterZ_out = 1.0;
+xCenter_out = [Waypoints(:,1) Waypoints(:,2) xCenterZ_out*ones(length(Waypoints(:,1)),1) ];
+delta = 0.1;
+
+fixWaypoints_in = zeros(length(Waypoints),3);
+fixWaypoints_out = zeros(length(Waypoints),3);
+
+for j=1:length(Waypoints)
+    [dummyLamda , fixWaypoints_in(j,:)] = getPotentialRatio(xCenter_in(j,:),xWall_plane(j,:),Waypoints(j,:),delta);
+    [dummyLamda , fixWaypoints_out(j,:)] = getPotentialRatio(xCenter_out(j,:),xWall_plane(j,:),Waypoints(j,:),delta);
+end
+
+figure
+grid on
+hold on
+plot3(Waypoints(:,1), Waypoints(:,2), Waypoints(:,3),'-b')
+plot3(fixWaypoints_in(:,1), fixWaypoints_in(:,2), fixWaypoints_in(:,3),'-r')
+
+% java file
+data = load('C:\Users\Carolina\Desktop\net_shared\LBR_interface\matlab\Windows\energy\JavaPoints.txt');
+Waypoints_java = data(:,1:3);
+fixWaypoints_in_java = data(:,4:6);
+%rho_in_java = data(:,7:9);
+fixWaypoints_out_java = data(:,7:9);
+%rho_out_java = data(:,13:15);
+
+figure
+subplot(1,2,1)
+grid on
+hold on
+plot3(Waypoints_java(:,1), Waypoints_java(:,2), Waypoints_java(:,3),'-b')
+plot3(fixWaypoints_in_java(:,1), fixWaypoints_in_java(:,2), fixWaypoints_in_java(:,3),'-r')
+
+subplot(1,2,2)
+grid on
+hold on
+plot3(Waypoints_java(:,1), Waypoints_java(:,2), Waypoints_java(:,3),'-b')
+plot3(fixWaypoints_out_java(:,1), fixWaypoints_out_java(:,2), fixWaypoints_out_java(:,3),'-r')
