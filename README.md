@@ -69,13 +69,13 @@ Here are some basic features of the project that can be re-used for other projec
 * The simulation robot follows the real ROBERT.
 
 
-![](readme/real_moving_moving.gif)
+![](readme/real_moving_simulator.gif)
 
 
 * The real robot follows the simulation model.
 
 
-![](readme/simulation_moving_real.gif)
+![](readme/simulator_moving_real.gif)
 
 
 * Path correction using an APF.
