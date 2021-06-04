@@ -421,3 +421,71 @@ end
 % conlcusion: the java double values are OK and close enough to the Matlab
 % values
 
+%% Updating the force-velocity thing
+% Internal variables
+maxVel = 0.99; minVel = 0.00001;
+maxForce = 20; minForce = 10;
+cte = (maxForce*maxForce)-(2*maxForce*minForce) + (minForce*minForce);
+m = (maxVel-minVel)/(exp(cte)-1);
+m2 = (maxVel-minVel)/(exp(maxForce-minForce)-1);
+n = minVel - m;
+    	
+dForce = force - minForce;
+if(dForce < 0)
+    dForce = 0;
+end
+if (dForce > maxForce)
+    dForce = maxForce;
+end
+    	
+dForce_square = dForce^2;
+output = n + (m*exp(dForce_square));
+    	
+if (output<minVel)
+output = minVel;
+end
+
+if(output > maxVel)
+output = maxVel;
+end
+
+%% Force-velocity for the Kuka LBR Med
+%force = [minForce:0.001:maxForce];
+maxForce = 20;
+minForce = 10;
+maxVel = 100;
+minVel = 0.1;
+force = [0.85*minForce:0.001:1.15*maxForce];
+m = (maxVel-minVel)/(exp(maxForce-minForce)-1);
+n = minVel - m;
+result2=[];
+
+for(k=1:length(force))
+    dForce = force(k) - minForce;
+    if(force(k) < minForce)
+    dForce = 0;
+    end
+    if (force(k) > maxForce)
+        dForce = maxForce - minForce;
+    end
+    
+    %dForce_square = dForce^2;
+    %output = n + (m*exp(dForce_square));
+    %result1 = [result1; output];
+
+    output = n + (m*exp(dForce));
+    result2 = [result2; output];
+end
+
+figure
+grid on
+hold on
+title('Velocity-force approach')
+xlabel('Force feedback [Nm]')
+ylabel('Velocity [mm/s]')
+plot(force,result2,'Linewidth',2)
+xlim([force(1) force(end)])
+ylim([0 1.15*maxVel])
+% limit lines
+plot([minForce minForce], [0 1.15*maxVel], '-g',[maxForce maxForce], [0 1.15*maxVel], '-r' ,'Linewidth',2)
+legend('Velocity', 'f min', 'f max')

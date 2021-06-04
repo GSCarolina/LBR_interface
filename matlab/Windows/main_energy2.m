@@ -142,7 +142,7 @@ go3_java = load('C:\Users\Carolina\Desktop\net_shared\LBR_interface\matlab\Windo
 
 plot3(x(:,1)',x(:,2)',go1_java,x(:,1)',x(:,2)',go2_java,x(:,1)',x(:,2)',go3_java)
 % This went fine
-%% Testing different margins (3D plane)
+%% Testing 3 different margins (3D plane)
 Kmax = 500; Kmin = 200;
 xCenter =[10; 10];
 xWall = [5; 5];
@@ -174,7 +174,7 @@ plot3([xWall(1) xWall(1)], [xWall(2) xWall(2)], [Kmin Kmax],'-r','LineWidth', 2)
 xlabel('x [m]')
 ylabel('y [m]')
 zlabel('Gain')
-title(['Stiffness Gain with x offset = ' num2str(xOff1)])
+title(['Stiffness Gain with delta = ' num2str(xOff1)])
 
 subplot(1,3,2)
 grid on
@@ -186,7 +186,7 @@ plot3([xWall(1) xWall(1)], [xWall(2) xWall(2)], [Kmin Kmax],'-r','LineWidth', 2)
 xlabel('x [m]')
 ylabel('y [m]')
 zlabel('Gain')
-title(['Stiffness Gain with x offset = ' num2str(xOff2)])
+title(['Stiffness Gain with delta = ' num2str(xOff2)])
 
 subplot(1,3,3)
 grid on
@@ -198,7 +198,245 @@ plot3([xWall(1) xWall(1)], [xWall(2) xWall(2)], [Kmin Kmax],'-r','LineWidth', 2)
 xlabel('x [m]')
 ylabel('y [m]')
 zlabel('Gain')
-title(['Stiffness Gain with x offset = ' num2str(xOff3)])
+title(['Stiffness Gain with delta = ' num2str(xOff3)])
+
+%% Testing LAMBDA with 2 different margins (3D plane)
+Kmax = 1; Kmin = 0;
+xCenter =[10; 10];
+%xWall = [5; 5];
+xWall1 = [7; 3];
+xWall2 = [18; 2];
+%delta1 = 0.125; delta2 = 0.3;
+delta = 0.5;
+xWall_x = [0:0.1:20]; xWall_Y = 20; xWall_acc = [xWall_x; xWall_Y*ones(1,length(xWall_x))];
+
+[X,Y] = meshgrid(0:0.1:20,0:0.1:20);
+[sizeM sizeN] = size(X);
+Z1 = zeros(sizeM,sizeN);
+Z2 = zeros(sizeM,sizeN);
+Z_total = zeros(sizeM,sizeN); % new
+Z_acc = zeros(sizeM,sizeN); % new
+
+for i=1:sizeM
+    for j=1:sizeN
+        Z1(i,j) = getPotentialGain(xCenter,xWall1,[X(i,j) Y(i,j)],delta,Kmax,Kmin);
+        Z2(i,j) = getPotentialGain(xCenter,xWall2,[X(i,j) Y(i,j)],delta,Kmax,Kmin);
+        %Z2(i,j) = getPotentialGain(xCenter,xWall1,[X(i,j) Y(i,j)],delta2,Kmax,Kmin);
+        for(k=1:length(xWall_x))
+            Z_acc(i,j) = Z_acc(i,j) + getPotentialGain(xCenter,xWall_acc(:,k),[X(i,j) Y(i,j)],delta,Kmax,Kmin);
+        end
+    end
+end
+% Z _ total
+Z_total = Z1+Z2;% + Z_acc;
+Zmax1 = 0; Zmax2 = 0; Zmax_total = 0;
+for i=1:sizeM
+    if(max(Z_total(i,:))>Zmax1)
+        Zmax1 = max(Z_total(i,:));
+    end
+    if(max(Z_acc(i,:))>Zmax2)
+        Zmax2 = max(Z_acc(i,:));
+    end
+end
+Z_total_norm = ((1/Zmax1)*Z_total)+((1/Zmax2)*Z_acc);
+for i=1:sizeM
+    if(max(Z_total_norm(i,:))>Zmax_total)
+        Zmax_total = max(Z_total_norm(i,:));
+    end
+end
+Z_total_norm = (1/Zmax_total)*Z_total_norm;
+
+turnPlane = surf(X,Y,Z_total_norm,'FaceAlpha',0.7, 'EdgeColor','none')
+% Z _ acc
+Zmax = 0;
+for i=1:sizeM
+    if(max(Z_acc(i,:))>Zmax)
+        Zmax = max(Z_acc(i,:));
+    end
+end
+Z_acc_norm = (1/Zmax)*Z_acc;
+%turnPlane = surf(X,Y,Z_total_norm,'FaceAlpha',0.7, 'EdgeColor','none')
+% plotting the lines and stuff
+figure
+grid on
+hold on
+turnPlane = surf(X,Y,Z_total_norm,'FaceAlpha',0.7, 'EdgeColor','none')
+plot3([xCenter(1) xCenter(1)], [xCenter(2) xCenter(2)], [Kmin Kmax],'-k','LineWidth', 2)
+plot3([xWall1(1) xWall1(1)], [xWall1(2) xWall1(2)], [Kmin Kmax],'-r','LineWidth', 2)
+plot3([xWall2(1) xWall2(1)], [xWall2(2) xWall2(2)], [Kmin Kmax],'-r','LineWidth', 2)
+%drawing a wall as a square
+plot3([xWall_acc(1,1) xWall_acc(1,end)], [xWall_acc(2,1) xWall_acc(2,1)], [Kmin Kmin],'-r','LineWidth', 2)
+plot3([xWall_acc(1,1) xWall_acc(1,end)], [xWall_acc(2,1) xWall_acc(2,1)], [Kmax Kmax],'-r','LineWidth', 2)
+plot3([xWall_acc(1,1) xWall_acc(1,1)], [xWall_acc(2,1) xWall_acc(2,1)], [Kmin Kmax],'-r','LineWidth', 2)
+plot3([xWall_acc(1,end) xWall_acc(1,end)], [xWall_acc(2,1) xWall_acc(2,1)], [Kmin Kmax],'-r','LineWidth', 2)
+%'FaceColor' = select color in a hexadecimal value
+xlabel('x [m]')
+ylabel('y [m]')
+zlabel('lambda')
+title(['Lambda ratio with delta = ' num2str(delta)])
+
+% Actual figure
+figure
+subplot(1,2,1)
+grid on
+hold on
+turnPlane = surf(X,Y,Z1,'FaceAlpha',0.7, 'EdgeColor','none')
+plot3([xCenter(1) xCenter(1)], [xCenter(2) xCenter(2)], [Kmin Kmax],'-g','LineWidth', 2)
+plot3([xWall(1) xWall(1)], [xWall(2) xWall(2)], [Kmin Kmax],'-r','LineWidth', 2)
+%'FaceColor' = select color in a hexadecimal value
+xlabel('x [m]')
+ylabel('y [m]')
+zlabel('lambda')
+title(['Lambda ratio with delta = ' num2str(delta1)])
+
+subplot(1,2,2)
+grid on
+hold on
+turnPlane = surf(X,Y,Z2,'FaceAlpha',0.7, 'EdgeColor','none')
+plot3([xCenter(1) xCenter(1)], [xCenter(2) xCenter(2)], [Kmin Kmax],'-g','LineWidth', 2)
+plot3([xWall(1) xWall(1)], [xWall(2) xWall(2)], [Kmin Kmax],'-r','LineWidth', 2)
+%'FaceColor' = select color in a hexadecimal value
+xlabel('x [m]')
+ylabel('y [m]')
+zlabel('lambda')
+title(['Lambda ratio with delta = ' num2str(delta2)])
+
+%% Testing STIFFNESS GAINS with 2 different margins (3D plane)
+Kmax = 5000; Kmin = 200;
+xCenter =[10; 10];
+xWall = [5; 5];
+delta1 = 0.5; delta2 = 0.65;
+
+[X,Y] = meshgrid(0:0.1:20,0:0.1:20);
+[sizeM sizeN] = size(X);
+Z1 = zeros(sizeM,sizeN);
+Z2 = zeros(sizeM,sizeN);
+
+for i=1:sizeM
+    for j=1:sizeN
+        Z1(i,j) = getPotentialGain(xCenter,xWall,[X(i,j) Y(i,j)],delta1,Kmax,Kmin);
+        Z2(i,j) = getPotentialGain(xCenter,xWall,[X(i,j) Y(i,j)],delta2,Kmax,Kmin);
+    end
+end
+
+
+figure
+subplot(1,2,1)
+grid on
+hold on
+turnPlane = surf(X,Y,Z1,'FaceAlpha',0.7, 'EdgeColor','none')
+plot3([xCenter(1) xCenter(1)], [xCenter(2) xCenter(2)], [Kmin Kmax],'-k','LineWidth', 2)
+plot3([xWall(1) xWall(1)], [xWall(2) xWall(2)], [Kmin Kmax],'-r','LineWidth', 2)
+%'FaceColor' = select color in a hexadecimal value
+xlabel('x [m]')
+ylabel('y [m]')
+zlabel('Gain')
+title(['Stiffness gain with delta = ' num2str(delta1)])
+
+subplot(1,2,2)
+grid on
+hold on
+turnPlane = surf(X,Y,Z2,'FaceAlpha',0.7, 'EdgeColor','none')
+plot3([xCenter(1) xCenter(1)], [xCenter(2) xCenter(2)], [Kmin Kmax],'-k','LineWidth', 2)
+plot3([xWall(1) xWall(1)], [xWall(2) xWall(2)], [Kmin Kmax],'-r','LineWidth', 2)
+%'FaceColor' = select color in a hexadecimal value
+xlabel('x [m]')
+ylabel('y [m]')
+zlabel('Gain')
+title(['Stiffness gain with delta = ' num2str(delta2)])
+
+%% Testing STIFFNESS GAINS IN A TUBE with 2 different margins (3D plane)
+Kmax = 5000; Kmin = 200;
+xCenter =[10; 10];
+xCenterTube =[10; 10];
+delta1 = 0.2; delta2 = 0.2;
+
+xWall_R1 = 10;
+xWall_R2 = 5;
+
+[X,Y] = meshgrid(0:0.1:20,0:0.1:20);
+[sizeM sizeN] = size(X);
+Z1 = zeros(sizeM,sizeN);
+Z2 = zeros(sizeM,sizeN);
+
+for i=1:sizeM
+    
+    for j=1:sizeN
+        x = [X(i,j); Y(i,j)];
+        %get angle
+        cosC = 0;
+        senC = 0;
+        x_r = sqrt((x(1)-xCenterTube(1))^2 + (x(2)-xCenterTube(2))^2);
+        if(x_r > 2)
+            cosC = (x(1)-xCenterTube(1))/x_r;
+            senC = (x(2)-xCenterTube(2))/x_r;
+        else
+            if(x(1)>xCenterTube(1))
+                cosC = cos(pi/4);
+            else
+                cosC = -cos(pi/4);
+            end
+            if(x(2)>xCenterTube(2))
+                senC = sin(pi/4);
+            else
+                senC = -sin(pi/4);
+            end
+        end
+        
+        xWall1 = [xCenterTube(1) + xWall_R1*cosC; xCenterTube(2)+xWall_R1*senC];
+        Z1(i,j) = getPotentialGain(xCenter,xWall1,x,delta1,Kmax,Kmin);
+        
+        xWall2 = [xCenterTube(1) + xWall_R2*cosC; xCenterTube(2)+xWall_R2*senC];
+        Z2(i,j) = getPotentialGain(xCenter,xWall2,x,delta2,Kmax,Kmin);
+       
+    end
+end
+
+% plot
+figure
+subplot(1,2,1)
+grid on
+hold on
+turnPlane = surf(X,Y,Z1,'FaceAlpha',0.7, 'EdgeColor','none')
+plot3([xCenter(1) xCenter(1)], [xCenter(2) xCenter(2)], [Kmin Kmax],'-k','LineWidth', 2)
+
+x_plot = [(xCenterTube(1)-xWall_R1):0.01:(xCenterTube(1)+xWall_R1)];
+y_plot1 = zeros(1,length(x_plot)); y_plot2 =  y_plot1;
+for(k=1:length(y_plot1))
+    temp = sqrt(xWall_R1^2 - (x_plot(k)-xCenterTube(1))^2 );
+    y_plot1(k) = xCenterTube(2) + temp;
+    y_plot2(k) = xCenterTube(2) - temp;
+end
+
+plot3(x_plot,y_plot1,Kmax*ones(1,length(x_plot)),'-r','LineWidth', 2)
+plot3(x_plot,y_plot2,Kmax*ones(1,length(x_plot)),'-r','LineWidth', 2)
+%'FaceColor' = select color in a hexadecimal value
+xlabel('x [m]')
+ylabel('y [m]')
+zlabel('Gain')
+title(['Delta = ' num2str(delta1) ' and radius = ' num2str(xWall_R1)])
+
+subplot(1,2,2)
+grid on
+hold on
+turnPlane = surf(X,Y,Z2,'FaceAlpha',0.7, 'EdgeColor','none')
+plot3([xCenter(1) xCenter(1)], [xCenter(2) xCenter(2)], [Kmin Kmax],'-k','LineWidth', 2)
+
+x_plot = [(xCenter(1)-xWall_R2):0.01:(xCenter(1)+xWall_R2)];
+y_plot1 = zeros(1,length(x_plot)); y_plot2 =  y_plot1;
+for(k=1:length(y_plot1))
+    temp = sqrt(xWall_R2^2 - (x_plot(k)-xCenterTube(1))^2 );
+    y_plot1(k) = xCenterTube(2) + temp;
+    y_plot2(k) = xCenterTube(2) - temp;
+end
+
+plot3(x_plot,y_plot1,Kmax*ones(1,length(x_plot)),'-r','LineWidth', 2)
+plot3(x_plot,y_plot2,Kmax*ones(1,length(x_plot)),'-r','LineWidth', 2)
+%'FaceColor' = select color in a hexadecimal value
+xlabel('x [m]')
+ylabel('y [m]')
+zlabel('Gain')
+title(['Delta = ' num2str(delta1) ' and radius = ' num2str(xWall_R2)])
 
 %%
 figure
@@ -388,11 +626,11 @@ figure
 subplot(1,2,1)
 grid on
 hold on
-plot3(Waypoints(:,1), Waypoints(:,2), Waypoints(:,3),'ob')
-plot3(recordPath(:,1), recordPath(:,2), recordPath(:,3),'-b')
+plot3(Waypoints(:,1), Waypoints(:,2), Waypoints(:,3),'ok','LineWidth', 2)
+plot3(recordPath(:,1), recordPath(:,2), recordPath(:,3),'-k','LineWidth', 2)
 
-plot3(fixWaypoints_in(:,1), fixWaypoints_in(:,2), fixWaypoints_in(:,3),'or')
-plot3(fixPath_in(:,1), fixPath_in(:,2), fixPath_in(:,3),'-r')
+plot3(fixWaypoints_in(:,1), fixWaypoints_in(:,2), fixWaypoints_in(:,3),'or','LineWidth', 2)
+plot3(fixPath_in(:,1), fixPath_in(:,2), fixPath_in(:,3),'-r','LineWidth', 2)
 
 surfWall = surf(x, y, z,'FaceAlpha',0.3,'EdgeColor', 'none'); % Plot the surface
 axis([xLimit yLimit zLimit]);
@@ -406,11 +644,11 @@ zlabel('z [m]')
 subplot(1,2,2)
 grid on
 hold on
-plot3(Waypoints(:,1), Waypoints(:,2), Waypoints(:,3),'ob')
-plot3(recordPath(:,1), recordPath(:,2), recordPath(:,3),'-b')
+plot3(Waypoints(:,1), Waypoints(:,2), Waypoints(:,3),'ok','LineWidth', 2)
+plot3(recordPath(:,1), recordPath(:,2), recordPath(:,3),'-k','LineWidth', 2)
 
-plot3(fixWaypoints_out(:,1), fixWaypoints_out(:,2), fixWaypoints_out(:,3),'or')
-plot3(fixPath_out(:,1), fixPath_out(:,2), fixPath_out(:,3),'-r')
+plot3(fixWaypoints_out(:,1), fixWaypoints_out(:,2), fixWaypoints_out(:,3),'or','LineWidth', 2)
+plot3(fixPath_out(:,1), fixPath_out(:,2), fixPath_out(:,3),'-r','LineWidth', 2)
 surfWall = surf(x, y, z,'FaceAlpha',0.3,'EdgeColor', 'none'); % Plot the surface
 
 axis([xLimit yLimit zLimit]);

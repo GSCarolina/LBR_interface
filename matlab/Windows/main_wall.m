@@ -181,3 +181,120 @@ NSamples = 10;
 path  = genCorner(NSamples,Waypoints);       
 plot(Waypoints(:,1),Waypoints(:,2),'-b')
 plot(path(:,1),path(:,2),'-r')
+
+%% FINDING THE CLOSEST POINT TO A VIRTUAL CONSTRAINT
+xWall = [10; 10; 0.3];
+xCenter = [0; 0; 0];
+x1 = [3; 3; 0.1];
+x2 = [-3; 2; 0.1];
+x3 = [-1; -4; 0.1];
+x4 = [0.2; -3; 0.1];
+vTube_R = 4.5; %m
+
+% Calculate distances 
+xtemp_max = 0; xtemp = 0; xmax_acc = 0; x_acc = 0; x1_acc = 0;
+for i=1:length(xCenter)
+    % rho0
+    xtemp_max = (xWall(i)-xCenter(i))^2;
+    xmax_acc = xmax_acc + xtemp_max;    
+    % rho
+    xtemp = (xWall(i)-x(i))^2;
+    x_acc = x_acc + xtemp;
+    
+    % rho1
+    xtemp = (x(i)-xCenter(i))^2;
+    x1_acc = x1_acc + xtemp;
+end
+
+% Calculate angle between center and vc (I)
+if(x1(1) == x1(1) && x1(2) == xCenter(2))
+    cosC1 = 0;
+    senC1 = 0;
+else
+    cosC1 = (x1(1)-xCenter(1))/sqrt((x1(1)-xCenter(1))^2 + (x1(2)-xCenter(2))^2);
+    senC2 = (x1(2)-xCenter(2))/sqrt((x1(1)-xCenter(1))^2 + (x1(2)-xCenter(2))^2);
+end
+senA1 = (x1(3)-xCenter(3))/sqrt((x1(1)-xCenter(1))^2 + (x1(3)-xCenter(3))^2);
+vTube1 = [vTube_R*cosC1; vTube_R*senC2; vTube_R*senA1];
+
+% Calculate angle between center and vc (II)
+if(x2(1) == x2(1) && x2(2) == xCenter(2))
+    cosC2 = 0;
+    senC2 = 0;
+else
+    cosC2 = (x2(1)-xCenter(1))/sqrt((x2(1)-xCenter(1))^2 + (x2(2)-xCenter(2))^2);
+    senC2 = (x2(2)-xCenter(2))/sqrt((x2(1)-xCenter(1))^2 + (x2(2)-xCenter(2))^2);
+end
+senA2 = (x2(3)-xCenter(3))/sqrt((x2(1)-xCenter(1))^2 + (x2(3)-xCenter(3))^2);
+vTube2 = [vTube_R*cosC2; vTube_R*senC2; vTube_R*senA2];
+
+% Calculate angle between center and vc (III)
+if(x3(1) == x3(1) && x3(2) == xCenter(2))
+    cosC3 = 0;
+    senC3 = 0;
+else
+    cosC3 = (x3(1)-xCenter(1))/sqrt((x3(1)-xCenter(1))^2 + (x3(2)-xCenter(2))^2);
+    senC3 = (x3(2)-xCenter(2))/sqrt((x3(1)-xCenter(1))^2 + (x3(2)-xCenter(2))^2);
+end
+senA3 = (x3(3)-xCenter(3))/sqrt((x3(1)-xCenter(1))^2 + (x3(3)-xCenter(3))^2);
+vTube3 = [vTube_R*cosC3; vTube_R*senC3; vTube_R*senA3];
+
+% Calculate angle between center and vc (IV)
+if(x4(1) == x4(1) && x4(2) == xCenter(2))
+    cosC4 = 0;
+    senC4 = 0;
+else
+    cosC4 = (x4(1)-xCenter(1))/sqrt((x4(1)-xCenter(1))^2 + (x4(2)-xCenter(2))^2);
+    senC4 = (x4(2)-xCenter(2))/sqrt((x4(1)-xCenter(1))^2 + (x4(2)-xCenter(2))^2);
+end
+senA4 = (x4(3)-xCenter(3))/sqrt((x4(1)-xCenter(1))^2 + (x4(3)-xCenter(3))^2);
+vTube4 = [vTube_R*cosC4; vTube_R*senC4; vTube_R*senA4];
+
+%vC = 
+% tube definitions
+x_plot = [(xCenter(1)-vTube_R):0.01:(xCenter(2)+vTube_R)];
+y_plot1 = zeros(1,length(x_plot)); y_plot2 =  y_plot1;
+
+for(k=1:length(y_plot1))
+    y_plot1(k) = sqrt(vTube_R^2 - (x_plot(k)-xCenter(1))^2 );
+    y_plot2(k) = -y_plot1(k);
+end
+
+figure
+grid on
+hold on
+plot(x_plot,y_plot1,'-b',x_plot,y_plot2,'-b')
+
+plot(xCenter(1),xCenter(2),'*k')
+plot(x1(1),x1(2), '*r',vTube1(1),vTube1(2),'or')
+plot(x2(1),x2(2), '*g',vTube2(1),vTube2(2),'og')
+plot(x3(1),x3(2), '*c',vTube3(1),vTube3(2),'oc')
+plot(x4(1),x4(2), '*m',vTube4(1),vTube4(2),'om')
+
+
+%% Checking that the Java files work
+dataJava = load('javaTube.txt');
+xCenter = dataJava(1,1:2);
+xPos = dataJava(:,3:4);
+xTube = dataJava(:,5:6);
+
+% showing stuff
+figure
+grid on
+hold on
+plot(xCenter(1),xCenter(2),'*k',xPos(:,1),xPos(:,2),'-b',xTube(:,1),xTube(:,2),'-r')
+
+% calculating if the circle is correct
+mX = []; mTube = [];
+
+for k=1:length(xCenter(:,1))
+   mX = [mX; (xPos(1)-xCenter(1))/(xPos(2)-xCenter(2))]; 
+   mTube = [mTube; (xTube(1)-xCenter(1))/(xTube(2)-xCenter(2))]; 
+   
+end
+
+diff = mX - mTube;
+
+max(diff)
+% if it shows 0 it means that it is fine
+
