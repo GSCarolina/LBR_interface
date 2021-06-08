@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<RoboticsAPI>
+    <Engine Class="com.kuka.roboticsAPI.persistenceModel.PersistenceEngine"/>
+    <Engine Class="com.kuka.roboticsAPI.uiModel.UIEngine"/>
+    <DataSource Class="com.kuka.roboticsAPI.persistenceModel.XmlApplicationDataSource" DataFile="RoboticsAPI.data.xml" Name="robotApplicationDataSource"/>
+    <Controller Class="com.kuka.med.controllerModel.MedController" KeepAliveSendTimeout="5000" Name="KUKA_Sunrise_Cabinet_1" NameserverAddress="172.31.1.147" NameserverPort="23456">
+        <Mapper Class="com.kuka.roboticsAPI.controllerModel.sunrise.mapping.HandGuidingControlModeMapper"/>
+        <Mapper Class="com.kuka.roboticsAPI.controllerModel.sunrise.mapping.HandGuidingMapper"/>
+        <Mapper Class="com.kuka.jogging.provider.api.motions.JoggingMapper"/>
+        <Mapper Class="com.kuka.med.cyclicBrakeTest.internal.JoggingMapperMed"/>
+        <Mapper Class="com.kuka.med.cyclicBrakeTest.BrakeTestInitMotionOverlayMapper"/>
+    </Controller>
+</RoboticsAPI>
